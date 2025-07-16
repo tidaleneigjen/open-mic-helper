@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: openmic
+      POSTGRES_USER: openmicuser
+      POSTGRES_PASSWORD: openmicpass
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=openmic
+      - DB_USER=openmicuser
+      - DB_PASSWORD=openmicpass
+      - DB_HOST=db
+    depends_on:
+      - db
+
+  frontend:
+    build: 
+        context: ./frontend
+        dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+
+volumes:
+  postgres_data:
