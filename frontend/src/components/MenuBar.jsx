@@ -1,5 +1,8 @@
+import LogoutButton from "./LogoutButton"; // Adjust the path if your LogoutButton is in a different folder
+
 export default function MenuBar({ view, setView, onLogout }) {
   const buttons = [
+    { label: "Home", view: "home" },
     { label: "Songs", view: "add-song" },
     { label: "Sets", view: "sets" },
     { label: "Sessions", view: "sessions" },
@@ -22,12 +25,7 @@ export default function MenuBar({ view, setView, onLogout }) {
           </button>
         ))}
       </div>
-      <button
-        onClick={onLogout}
-        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors duration-200"
-      >
-        Logout
-      </button>
+      <LogoutButton onLogout={onLogout} />
     </div>
   );
 }

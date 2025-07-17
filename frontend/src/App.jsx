@@ -1,47 +1,30 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import SetList from "./components/SetList";
 import AddSong from "./components/AddSong";
 import MenuBar from "./components/MenuBar";
 import LoginForm from "./components/LoginForm";
 import LogoutButton from "./components/LogoutButton";
+import Home from "./components/Home"; // <-- import Home view
 
 export default function App() {
-  const [view, setView] = useState("sets");
+  const [view, setView] = useState("home");  // default to "home"
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const formRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
 
-  // ⬇️ Close login form when clicking outside of it
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (formRef.current && !formRef.current.contains(e.target)) {
-        setShowLogin(false);
-      }
-    };
-
-    if (showLogin) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showLogin]);
-
   const handleLogin = () => {
     setIsLoggedIn(true);
-    setView("sets");
+    setView("home");
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    setView("sets");
+    setView("home");
     setShowLogin(false);
   };
 
@@ -59,10 +42,7 @@ export default function App() {
             title="Click to log in"
           />
         ) : (
-          <div
-            ref={formRef}
-            className="w-full max-w-sm transition-opacity duration-500 animate-fade-in bg-gray-800 p-6 rounded-lg shadow-lg"
-          >
+          <div className="w-full max-w-sm transition-opacity duration-500 animate-fade-in">
             <LoginForm onLogin={handleLogin} />
           </div>
         )}
@@ -73,18 +53,12 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex justify-center px-4 py-10">
       <div className="w-full max-w-3xl flex flex-col items-center">
-        <MenuBar view={view} setView={setView} />
+        <MenuBar view={view} setView={setView} onLogout={handleLogout} />
         <div className="w-full bg-gray-800 shadow-md rounded-lg p-6 mt-6">
-          <LogoutButton onLogout={handleLogout} />
-          {view === "sets" && (
-            <>
-              <h1 className="text-3xl font-bold mb-4 text-center">
-                Open Mic Helper 🎤
-              </h1>
-              <SetList />
-            </>
-          )}
+          {view === "home" && <Home />}
+          {view === "sets" && <SetList />}
           {view === "add-song" && <AddSong onSongAdded={handleSongAdded} />}
+          {/* You can add other views like "songs", "sessions" here as you build them */}
         </div>
       </div>
     </div>
