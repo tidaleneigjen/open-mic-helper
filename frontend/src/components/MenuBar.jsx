@@ -1,23 +1,33 @@
-// components/MenuBar.jsx
-export default function MenuBar({ view, setView }) {
+export default function MenuBar({ view, setView, onLogout }) {
+  const buttons = [
+    { label: "Songs", view: "add-song" },
+    { label: "Sets", view: "sets" },
+    { label: "Sessions", view: "sessions" },
+  ];
+
   return (
-    <nav className="w-full flex justify-center space-x-6 bg-gray-800 p-4 rounded-md shadow-md text-gray-100">
+    <div className="w-full flex justify-between items-center bg-gray-800 text-gray-100 px-4 py-3 rounded-lg shadow-md">
+      <div className="flex gap-4">
+        {buttons.map(({ label, view: targetView }) => (
+          <button
+            key={label}
+            onClick={() => setView(targetView)}
+            className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 ${
+              view === targetView
+                ? "bg-purple-600 text-white"
+                : "hover:bg-gray-700"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       <button
-        onClick={() => setView("sets")}
-        className={`px-4 py-2 rounded-md font-semibold transition ${
-          view === "sets" ? "bg-indigo-600" : "hover:bg-indigo-700"
-        }`}
+        onClick={onLogout}
+        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors duration-200"
       >
-        Sets
+        Logout
       </button>
-      <button
-        onClick={() => setView("add-song")}
-        className={`px-4 py-2 rounded-md font-semibold transition ${
-          view === "add-song" ? "bg-indigo-600" : "hover:bg-indigo-700"
-        }`}
-      >
-        Add Song
-      </button>
-    </nav>
+    </div>
   );
 }
